@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Home Page";
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+
+    /*#divv {
+        background-image: url("~/img/cocktailss.jpg");
+    }*/
+    /*#natpis { color: "#ff6699"; }*/
+    body {
+        background-color: #e1e1d0;
+    }
+
+    #natpis {
+        color: #990000;
+        font-size: large;
+        font-weight: bold;
+    }
+</style>
+
+<div class="text-center" id="divv">
+
+    <div class="mainText">
+        <h1 style="text-align:center;  color:darkred; @*font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;*@ font-style: oblique;">
+            <b>COCKTAILS</b>
+        </h1>
+        <h2 id="natpis" style="font-style: oblique; ">
+            Welcome to the app with a large selection of cocktails.<br />
+            Save the craziest memories!
+
+        </h2>
+        <br />
+        <br />
+        @if (HttpContextAccessor.HttpContext.Session.GetString("uloga") != "user" && HttpContextAccessor.HttpContext.Session.GetString("uloga") != "admin")
+        {
+            <p>Let's get started! <a href="cocktails/signUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></p>
+            <p>Already have an account? <a href="cocktails/signIn"><span class="glyphicon glyphicon-log-in"></span> Login</a></p>
+            <p>Admin <a href="cocktails/adminsignIn" style="color:darkred;"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></p>
+            }
+
+        <img id="slija" src="~/img/cockPNG.png" style="float:left; width:335px; height:420px;" />
+    </div>
+    <div class="footerTitle">
+
+    </div>
+
+
+</div>

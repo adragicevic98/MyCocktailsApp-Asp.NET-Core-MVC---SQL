@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewData["Title"] = "Category";
+}
+
+
+<h2 style="color:#b30000;">Category<span id="cat" style="font:100; color:#b30000;"></span></h2>
+<div class="text-center">
+
+
+
+
+
+    <table class="table table-hover" id="category_cocktails">
+
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    'use strict';
+    var objekt;
+    var zahtjev3 = new XMLHttpRequest();
+    var ime = localStorage.getItem("Naziv kategorije");
+   
+    console.log(ime);
+    var tabl = document.getElementById("category_cocktails");
+    while (tabl.rows.length > 0) {
+        tabl.deleteRow(0);
+    }
+    document.getElementById("cat").innerHTML = " -> " + ime;
+    zahtjev3.onreadystatechange = stanje3;
+    zahtjev3.open('GET', `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${ime} `, true)
+    zahtjev3.send();
+    function stanje3() {
+        if (zahtjev3.status == 200 && zahtjev3.readyState == 4) {
+            var odg = zahtjev3.responseText;
+            console.log(odg);
+            objekt = JSON.parse(odg);
+            console.log(objekt);
+            var strTabl = "category_cocktails";
+         
+            for (var nesto of objekt.drinks) {
+                var naziv = nesto.strDrink;
+                var slika = nesto.strDrinkThumb;
+                var id = nesto.idDrink;
+                console.log(slika);
+
+
+                createOneDrink(id, naziv, slika, strTabl);
+
+            }
+
+        }
+    }
+    function createOneDrink(id, naz, sl, tab) {
+        console.log("Tablica:", tab);
+        var tablica = document.getElementById(tab);
+        console.log("TABL:" + tablica);
+        let row = tablica.insertRow();
+        row.id = id;
+        console.log(row);
+
+        let ime_stupac = row.insertCell();
+        ime_stupac.id = id;
+
+
+        let slika_stupac = row.insertCell();
+        slika_stupac.id = id;
+      
+        row.addEventListener("click", odabranRed, false);
+       
+
+        var ahref = document.createElement('a');
+        var ahref1 = document.createElement('a');
+        var ahref2 = document.createElement('a');
+        ahref.setAttribute('href', '/pmfst/cocktail');
+        ahref1.setAttribute('href', '/pmfst/cocktail');
+        ahref2.setAttribute('href', '/pmfst/cocktail');
+        var div = document.createElement('div');
+        div.style.width = "300px";
+
+        div.innerHTML = naz;
+        ahref.appendChild(div);
+
+        ime_stupac.appendChild(ahref);
+
+        console.log(div);
+        console.log(div.parentNode);
+        var img = document.createElement('img');
+        img.src = `${sl}`;
+        img.width = 200;
+        img.height = 200;
+        ahref1.appendChild(img);
+
+        slika_stupac.appendChild(ahref1);
+        ahref2.appendChild(ime_stupac);
+        ahref2.appendChild(slika_stupac);
+        row.appendChild(ahref2);
+
+        console.log(row);
+       
+
+    }
+    function odabranRed(event) {
+        console.log(event.target.parentNode);
+        console.log(event.target.parentNode.parentNode);
+        var id = event.target.parentNode.parentNode.id;
+        console.log("BAS OVAJ ID red:",id);
+        localStorage.setItem("IdCocktail", `${id}`);
+        localStorage.setItem("natrag", "/pmfst/category");
+    }
+
+
+
+    </script>
+

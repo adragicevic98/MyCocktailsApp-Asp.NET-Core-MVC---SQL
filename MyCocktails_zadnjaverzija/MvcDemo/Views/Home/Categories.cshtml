@@ -1,0 +1,78 @@
+@{
+    ViewBag.Title = "Categories";
+    Layout = "_Layout";
+}
+
+<h2 style="color:#b30000;">Categories<span id="cat" style="font:100; color:#b30000;"></span></h2>
+<div class="text-center">
+
+
+
+
+   
+    <table class="table table-hover" id="izbornik_tablica">
+
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+    </table>
+</div>
+<script type="text/javascript">
+             'use strict';
+
+      
+        function NoviRed(naz) {
+            var tablica = document.getElementById("izbornik_tablica");
+            let row = tablica.insertRow();
+            let ime_stupac = row.insertCell();
+            
+            ime_stupac.innerHTML = naz;
+            row.addEventListener("click", odabranaKategorija, false);
+           
+
+        }
+  
+    var id;
+    var naziv;
+    var slika;
+    var opis;
+    var vrsta;
+    let sastojcii = new Array(15);
+    let kolicinee = new Array(15);
+    var comment = "blablabla";
+    
+    var svi = [];
+    var change = false;
+   
+    function odabranaKategorija(event) {
+        window.location = '/pmfst/category';
+
+       
+        var ime = event.target.innerHTML;
+        localStorage.setItem("Naziv kategorije", `${ime}`);
+        
+
+        }
+
+        var zahtjev = new XMLHttpRequest();
+        var zahtjev2 = new XMLHttpRequest();
+        var objekt;
+            zahtjev.onreadystatechange = stanje;
+            zahtjev.open('GET', 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list', true)
+            zahtjev.send();
+            function stanje() {
+                if (zahtjev.status == 200 && zahtjev.readyState == 4) {
+                    var odg = zahtjev.responseText;
+                    objekt = JSON.parse(odg);
+ 
+                    for (var nesto of objekt.drinks) {
+                        var naziv = nesto.strCategory;
+                       
+                        NoviRed(naziv);
+
+                    }
+                  
+
+                }
+            }
+            
+</script>

@@ -1,0 +1,230 @@
+﻿
+@{
+    ViewData["Title"] = "adminHome";
+    ViewBag.Title = "adminHome";
+}
+
+<h2>Welcome admin!</h2>
+
+<div>
+
+</div>
+<table id="tabl">
+    <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Email</th>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+</table>
+
+@* Edit one user *@
+<br />
+<div id="forma" style="visibility:hidden;">
+        <form >
+            <label for="firstname">First name:</label>
+            <input type="text"
+                   placeholder="First name"
+                   id="firstname" />
+            <label for="lastname">Last name:</label>
+            <input type="text"
+                   placeholder="Last name"
+                   id="lastname" />
+            <label for="email">Email:</label>
+            <input type="text"
+                   cols=""
+                   rows="10"
+                   placeholder="Email"
+                   id="email" />
+            <label for="username">Username:</label>
+            <input type="text"
+                   placeholder="Username"
+                   id="username" />
+            <label for="password">Password:</label>
+            <input id="password" placeholder="password"  type="text" maxlength="10" />
+
+            <input type="button" value="Save" id="saveButton" style="background-color:green; color: white; " onclick="dodaj()" />
+            <input type="button" value="Close" id="closeButton" style="background-color:red; color: white; " onclick="zatvori()" />
+        </form>
+    </div>
+        <style>
+            input[type=text]{
+              width:70%;
+                padding: 6px 10px;
+                margin: 4px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                /*box-sizing: border-box;*/
+            }
+            label{
+                display:inline-block;
+                width:25%;
+            }
+            input[type=button] {
+                width: 47%;
+                padding: 6px 10px;
+                margin: 4px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                input[type=button]:hover {
+                    background-color: #b30000;
+                }
+              
+            #forma {
+                width: 40%;
+                border-radius: 5px;
+                background-color: #f2f2f2;
+                padding: 20px;
+                margin: auto;
+                float:left;
+                height:330px;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th, td {
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                /*background-color: #f2f2f2*/
+            }
+
+            th {
+                background-color: darkred;
+                color: white;
+            }
+        </style>
+        <script type="text/javascript">
+            'use strict';
+            function appendTableHead(single) {
+
+                let header = domHelper.createTableHeader(single);
+                let thead = document.getElementById('table-head');
+                console.log(header)
+                thead.appendChild(header);
+            }
+
+            function appendToTable(data) {
+
+                let rows = data.map(x => domHelper.createTableRow(x));
+                let tableBody = document.getElementById('table-body');
+
+                appendTableHead(data[0]);
+
+                for (let row of rows) {
+                    tableBody.appendChild(row);
+                }
+            }
+            function timedRefresh(time) {
+                setTimeout("location.reload(true);", time);
+            }
+
+            var iduser;
+            var uredi = false;
+            function dodaj() {
+                if (uredi) {
+                    let userEdit = {
+                        "id": `${iduser}`,
+                        "username": `${document.getElementById("username").value}`,
+                        "password": `${document.getElementById("password").value}`,
+                        "firstName": `${document.getElementById("firstname").value}`,
+                        "lastName": `${document.getElementById("lastname").value}`,
+                        "email": `${document.getElementById("email").value}`
+                    }
+                    axios.put("/api/admin/useredit", userEdit);
+                    timedRefresh(200);
+                }
+                timedRefresh(200);
+            }
+            //async function Save(id) {
+            //    console.log("Saving changes....")
+            //    let userEdit = {
+            //        "id": id,
+            //        "username": `${document.getElementById("selectedUsername").value}`,
+            //        "email": `${document.getElementById("selectedEmail").value}`,
+            //        "password": `${document.getElementById("selectedPassword").value}`
+            //    }
+            //    axios.put("/api/admin/useredit", userEdit);
+            //    timedRefresh(500);
+            //}
+            function removeUser(id) {
+                axios.delete(`/api/admin/delete/${id}`, id);
+                timedRefresh(500);
+            }
+           
+            axios.get('/api/admin/allusers').then(response => (spremanje(response)));
+            function timedRefresh(time) {
+                setTimeout("location.reload(true);", time);
+            }
+            function spremanje(odg) {
+                console.log(odg);
+                var tablica = document.getElementById("tabl");
+
+                for (let i = 0; i < odg.data.length; i++) {
+                    var red = tablica.insertRow();
+                    var naz_stupac = red.insertCell();
+                    var prez_stupac = red.insertCell();
+                    var em_stupac = red.insertCell();
+                    var un_stupac = red.insertCell();
+                    var ps_stupac = red.insertCell();
+                    var del_stupac = red.insertCell();
+                    var edit_stupac = red.insertCell();
+                    var btn_del = document.createElement("button");
+                    var btn_edit = document.createElement("button");
+                    btn_del.style = " margin: 4px 0; border: none; border-radius: 6px; cursor: pointer; width: 60px; color:white; background-color:red;"
+                    btn_del.innerHTML = "Delete";
+                    btn_edit.style = "background-color:#1a8cff; color:white; margin: 4px 0; border: none; border-radius: 6px; cursor: pointer; width: 60px;";
+                    btn_edit.innerHTML = "Edit";
+                    del_stupac.appendChild(btn_del);
+                    edit_stupac.appendChild(btn_edit);
+                    naz_stupac.innerHTML = odg.data[i].firstName;
+                    prez_stupac.innerHTML = odg.data[i].lastName;
+                    em_stupac.innerHTML = odg.data[i].email;
+                    un_stupac.innerHTML = odg.data[i].username;
+                    ps_stupac.innerHTML = odg.data[i].password;
+                    btn_del.id = odg.data[i].id;
+                    btn_del.addEventListener("click", brisi, false);
+                    btn_edit.id = odg.data[i].id;
+                    btn_edit.addEventListener("click", promjeni, false);
+                }
+            }
+            function brisi(event) {
+                console.log(event.target.id);
+                var iduser = event.target.id;
+                axios.delete(`/api/admin/delete/${iduser}`, iduser);
+
+                timedRefresh(100);
+            }
+            function promjeni(event) {
+                document.getElementById("forma").style.visibility = "visible";
+                console.log(event.target.id);
+                iduser = event.target.id;
+                axios.get(`/api/admin/user/${iduser}`).then(response => (dohvat(response)));
+
+            }
+            function dohvat(odg) {
+                uredi = true;
+
+                document.getElementById("firstname").value = odg.data.firstName;
+                document.getElementById("lastname").value = odg.data.lastName;
+                document.getElementById("email").value = odg.data.email;
+                document.getElementById("username").value = odg.data.username;
+                document.getElementById("password").value = odg.data.password;
+
+            }
+            function zatvori(event) {
+                document.getElementById("forma").style.visibility = "hidden";
+            }
+
+
+
+        </script>

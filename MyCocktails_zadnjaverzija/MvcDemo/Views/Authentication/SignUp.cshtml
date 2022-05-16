@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+@*<h1>SignUp</h1>
+
+<div class="registerBox">
+    <form method="POST" enctype="multipart/form-data" asp-controller="Authentication" asp-action="SignUp">
+        <input type="text" name="username" placeholder="Username.." />
+        <input type="text" name="firstname" placeholder="First name.." />
+        <input type="text" name="lastname" placeholder="Last name.." />
+        <input type="email" name="email" placeholder="E-mail.." />
+
+        <input type="password"
+               name="password"
+               id=""
+               placeholder="Password.." />
+
+        <input type="password"
+               name="passwordConfirmation"
+               id=""
+               placeholder="Confirm the password.." />
+
+        <input type="submit" name="register" value="Register" />
+        <p><a href="/cocktails/signin">Already have an account?</a></p>
+    </form>
+</div>*@
+
+<style>
+    input[type=text], input[type=password],input[type=email] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=submit] {
+        width: 100%;
+        background-color: darkred;
+        color: white;
+        padding: 14px 20px;
+        margin:8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        input[type=submit]:hover {
+            background-color: #b30000;
+        }
+
+    #forma {
+        width: 60%;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+        margin:auto;
+    }
+</style>
+<body>
+
+    <h3 style="text-align:center; color:darkred;">Sign Up</h3>
+
+    <div id="forma">
+        <form method="POST" enctype="multipart/form-data" asp-controller="Authentication" asp-action="SignUp">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Your username..">
+            <label for="firstname">First name</label>
+            <input type="text" name="firstname" placeholder="First name.." />
+            <label for="lastname">Lastname</label>
+            <input type="text" name="lastname" placeholder="Last name.." />
+            <label for="email">Email</label>
+            <input type="email" name="email" placeholder="E-mail.." />
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Your password.." maxlength="10">
+            <input type="password" name="passwordConfirmation" id="" placeholder="Confirm the password.." / maxlength="10">
+
+
+            <input type="submit" name="register" value="Register" />
+            <p><a href="/cocktails/signin">Already have an account?</a></p>
+        </form>
+    </div>
+
+</body>
+

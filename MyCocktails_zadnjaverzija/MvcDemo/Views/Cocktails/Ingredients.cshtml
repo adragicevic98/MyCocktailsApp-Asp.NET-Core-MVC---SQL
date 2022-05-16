@@ -1,0 +1,113 @@
+@{
+    ViewBag.Title = "Ingredientss";
+    Layout = "_Layout";
+}
+ <script type="text/javascript" src="~/js/site.js"></script>
+<h2 style="color:#b30000;">Ingredients</h2>
+<div class="text-center">
+        <table class="table table-hover" id="table_ingredients">
+        </table>
+
+
+</div>
+
+
+
+
+    <table>
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+
+
+
+    <script type="text/javascript">
+
+        'use strict';
+
+       
+        function NoviRed1(naz, tabl, loc, sl = "") {
+            var tablica = document.getElementById(tabl);
+            let row = tablica.insertRow();
+            row.name = naz;
+            
+            console.log(tablica);
+            let ime_stupac = row.insertCell();
+
+            var ahref = document.createElement('a');
+            var div = document.createElement('div');
+            var t_naz = document.createTextNode(naz);
+            div.appendChild(t_naz);
+
+
+            if (sl != "") {
+                var slika = document.createElement('img');
+                slika.src = sl;
+                ahref.appendChild(slika);
+            }
+            console.log(loc);
+            ahref.appendChild(div);
+            ahref.setAttribute('href', '/pmfst/ingredient');
+
+
+            ime_stupac.appendChild(ahref);
+         
+            row.addEventListener("click", odabranRedIngredient, false);
+            ime_stupac.addEventListener("click", odabranAtributIngredient, false);
+
+  
+
+        }
+        function odabranRedIngredient(event) {
+            window.location = '/pmfst/ingredient'
+            console.log(event.target);
+            console.log(event.target.parentNode);
+            console.log(event.target.parentNode.parentNode);
+            console.log(event);
+
+            var ime = event.target.parentNode.name;
+
+            if (ime != '') {
+                localStorage.setItem("Ingredient", `${ime}`);}
+            
+        }
+        function odabranAtributIngredient(event) {
+
+            var ime = event.target.parentNode.parentNode.parentNode.name;
+            localStorage.setItem("Ingredient", `${ime}`);
+
+        }
+
+        var zahtjev5 = new XMLHttpRequest();
+        var objekt;
+  
+        zahtjev5.onreadystatechange = stanje;
+        zahtjev5.open('GET', 'https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list', true)
+        zahtjev5.send();
+        function stanje() {
+            if (zahtjev5.status == 200 && zahtjev5.readyState == 4) {
+                var odg = zahtjev5.responseText;
+                objekt = JSON.parse(odg);
+                console.log("Odgovor: ", objekt);
+                var strTabl = "table_ingredients";
+                var strLoc = "#sesta";
+                var tablica = document.getElementById(strTabl);
+                while (tablica.rows.length > 0) {
+                    tablica.deleteRow(0);
+                }
+
+            
+                for (var nesto of objekt.drinks) {
+                    var naziv = nesto.strIngredient1;
+                    var thumbnail = `https://www.thecocktaildb.com/images/ingredients/${naziv}-Small.png`
+                    NoviRed1(naziv, strTabl, strLoc, thumbnail);
+                }
+
+
+            }
+
+        }
+
+
+
+    </script>

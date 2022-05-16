@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewData["Title"] = "Ingredient";
+}
+
+<h2 style=" color:#b30000;">Ingredient<span id="ing"></span></h2>
+<div class="text-center">
+    <table class="table table-hover" id="table_ingredient">
+    </table>
+
+
+</div>
+
+<script type="text/javascript">
+    var zahtjev4 = new XMLHttpRequest();
+
+    var ime = localStorage.getItem("Ingredient");
+    document.getElementById("ing").innerHTML = " -> "+ime;
+    var tabl = document.getElementById("table_ingredient");
+    console.log(tabl);
+    while (tabl.rows.length > 0) {
+        tabl.deleteRow(0);
+    }
+    zahtjev4.onreadystatechange = stanje4;
+    zahtjev4.open('GET', `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${ime}`);
+    zahtjev4.send();
+    function stanje4() {
+        if (zahtjev4.status == 200 && zahtjev4.readyState == 4) {
+            var odg = zahtjev4.responseText;
+            objekt = JSON.parse(odg);
+            console.log(objekt);
+            var strTabl = "table_ingredient";
+
+            for (var nesto of objekt.drinks) {
+                var naziv = nesto.strDrink;
+                var slika = nesto.strDrinkThumb;
+                var id = nesto.idDrink;
+                console.log(slika);
+                NoviRed2(id, naziv, slika);
+
+            }
+
+
+        }
+    }
+
+    function NoviRed2(id, naz, sl) {
+        var tablica = document.getElementById("table_ingredient");
+        let row = tablica.insertRow();
+
+        let ime_stupac = row.insertCell();
+        ime_stupac.id = id;
+        ime_stupac.width = 200;
+        let slika_stupac = row.insertCell();
+        slika_stupac.id = id;
+        row.id = id;
+        var ahref = document.createElement('a');
+        var ahref1 = document.createElement('a');
+        var ahref2 = document.createElement('a');
+        ahref.setAttribute('href', '/pmfst/cocktail');
+        ahref1.setAttribute('href', '/pmfst/cocktail');
+        ahref2.setAttribute('href', '/pmfst/cocktail');
+        var div = document.createElement('div');
+        var t_ime = document.createTextNode(naz);
+      
+        div.appendChild(t_ime);
+        ahref.appendChild(div);
+        
+        ime_stupac.appendChild(ahref);
+        
+        console.log(div);
+        console.log(div.parentNode);
+        var img = document.createElement('img');
+        img.src = `${sl}`;
+        img.width = 200;
+        img.height = 200;
+        ahref1.appendChild(img);
+
+        slika_stupac.appendChild(ahref1);
+        ahref2.appendChild(ime_stupac);
+        ahref2.appendChild(slika_stupac);
+        row.appendChild(ahref2);
+
+        row.addEventListener("click", odabranRed, false);
+
+    }
+  
+    function odabran1(event) {
+        console.log(event.target.parentNode);
+        console.log("odabran1");
+        console.log(event.target.parentNode.parentNode);
+        var id = event.target.parentNode.parentNode.id;
+        localStorage.setItem("IdCocktail", `${id}`);
+
+        console.log(id);
+    }
+   
+    function odabranRed(event) {
+        console.log(event.target.parentNode);
+        console.log(event.target.parentNode.parentNode);
+        var id = event.target.parentNode.parentNode.id;
+        localStorage.setItem("IdCocktail", `${id}`);
+        localStorage.setItem("natrag", "/pmfst/ingredient");
+    }
+
+</script>

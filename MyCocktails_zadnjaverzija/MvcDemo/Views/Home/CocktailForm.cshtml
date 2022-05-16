@@ -1,0 +1,280 @@
+﻿
+@{
+    ViewData["Title"] = "CocktailForm";
+}
+
+
+
+<html>
+<style>
+    input[type=text],textarea,#slija {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type=button] {
+        width: 20%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+    #forma {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+    #komentar {
+        width: 100%;
+        height: 150px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        font-size: 16px;
+        resize: none;
+    }
+    #cingredinets{
+        width: 70%;
+        height: auto;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        font-size: 16px;
+        resize: none;
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    label {
+        color: #b30000;
+        font-weight:bold;
+    }
+
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        color: #990000;
+        font-weight: bold;
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%;
+    }
+
+    /* The Close Button */
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    
+</style>
+
+<body>
+
+    <h3 style="color:#b30000;"><b>Save your comment</b></h3>
+
+    <div id="forma">
+        <form>
+            <label for="cname">Cocktail Name</label>
+            <input type="text" id="cname">
+            <div id="slija">
+                <img id="slika" />
+            </div>
+
+            <label for="ctype">Type</label>
+            <input type="text" id="ctype">
+            <label for="cinstructions">Instructions</label>
+            <textarea id="cinstructions"></textarea>
+            <label for="cingredients">Ingredients</label>
+            <textarea id="cingredients"></textarea>
+            <textarea id="komentar" placeholder="Your comment..."></textarea>
+
+            <input type="button" id="submit" value="Save" @*onclick="postavi()"*@ /><input type="button" id="leave" value="Close" onclick="zatvori()" style="background-color:red;"/>
+        </form>
+    </div>
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Your comment has been successfully saved!</p>
+        </div>
+
+    </div>
+
+</body>
+<script>
+    console.log("tu je ");
+    var cocktailId = localStorage.getItem("IdCocktail");
+    document.getElementById("cname").value = cocktailId;
+    console.log(cocktailId);
+
+    var zahtjev = new XMLHttpRequest();
+    var operacije;
+   
+
+    let sastojcii = new Array(15);
+    let kolicinee = new Array(15);
+    zahtjev.onreadystatechange = stanje;
+    zahtjev.open('GET', `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${cocktailId} `, true)
+    zahtjev.send();
+    function stanje() {
+        if (zahtjev.status == 200 && zahtjev.readyState == 4) {
+            var odg = zahtjev.responseText;
+            console.log("Response:" + odg);
+            objekt = JSON.parse(odg);
+            console.log(objekt);
+            var nesto = objekt.drinks[0];
+            console.log(nesto);
+            var naziv = nesto.strDrink;
+            console.log(naziv);
+            var slika = nesto.strDrinkThumb;
+            var opis = nesto.strInstructions;
+            var vrsta = nesto.strAlcoholic;
+            var sastojci = "<b>Ingredients:</b>" + "<br>";
+            for (let i = 1; i < 16; i++) {
+                var elemnt = `strIngredient${i}`;
+                console.log(nesto[elemnt]);
+                console.log(typeof (elemnt));
+                console.log(nesto.elemnt);
+                console.log(elemnt);
+                console.log(nesto.strIngredient1);
+                if (nesto[elemnt] != "" && nesto[elemnt] != null) {
+                    sastojcii[i - 1] = nesto[elemnt];
+                    kolicinee[i - 1] = nesto[`strMeasure${i}`];
+                    sastojci += "-" + nesto[`strMeasure${i}`] + " " + nesto[elemnt] + "<br>";
+                } else {
+                    sastojcii[i - 1] = null;
+                    kolicinee[i - 1] = null;
+                }
+
+            }
+            console.log(sastojcii);
+            console.log(kolicinee);
+            document.getElementById("cname").value = naziv;
+            document.getElementById("cname").disabled = true;
+            document.getElementById("slika").src = slika;
+            document.getElementById("slika").width = 200;
+            document.getElementById("slika").height = 200;
+            document.getElementById("slika").align = "center";
+            document.getElementById("ctype").value = vrsta;
+            document.getElementById("ctype").disabled = true;
+            document.getElementById("cingredients").value = "";
+            for (i = 0; i < sastojcii.length; i++) {
+                if (kolicinee[i] != null) {
+                    document.getElementById("cingredients").value += kolicinee[i] + sastojcii[i] + "\n";
+                }
+
+            }
+            document.getElementById("cingredients").disabled = true;
+            document.getElementById("cinstructions").value = opis;
+            document.getElementById("cinstructions").disabled = true;
+            operacije = localStorage.getItem("uredi");
+            if (operacije == "da") {
+                var idcoc = localStorage.getItem("IdCocktail");
+                axios.get(`/api/usercocktail/${idcoc}`).then(response => document.getElementById("komentar").value=(response.data.comment));
+
+            }
+        }
+    }
+    function zatvori() {
+        location.replace(localStorage.getItem("natrag"));
+    }
+    function postavi() {
+       
+
+    }
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("submit");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function(){
+        operacije = localStorage.getItem("uredi");
+        if (operacije == "ne") {
+            axios.post('/api/usercocktail/savecourse11', {
+                "id_user": parseInt(0),
+                "id_cocktail": cocktailId,
+                "comment": document.getElementById("komentar").value
+            });
+            //alert("Your comment has been posted!");
+        } else if (operacije == "da") {
+            var idcoc = localStorage.getItem("IdCocktail");
+            console.log("idcoc:" + idcoc);
+
+            let usCocktailEdit = {
+                "id_user": 0,
+                "id_cocktail": idcoc,
+                "comment": document.getElementById("komentar").value
+            }
+            axios.put('/api/usercocktail/cocktailedit', usCocktailEdit);
+        }
+        setTimeout(funk, 200);
+       
+
+        modal.style.display = "block";
+        function funk() {
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    location.replace(localStorage.getItem("natrag"));
+                }
+            }
+            span.onclick = function () {
+                modal.style.display = "none";
+                location.replace(localStorage.getItem("natrag"));
+            }
+           
+        }
+
+    }
+
+  
+    
+</script>
+</html>

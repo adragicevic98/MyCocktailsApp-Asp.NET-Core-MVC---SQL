@@ -1,0 +1,129 @@
+﻿<h1>@ViewData["Title"]</h1>
+
+<table >
+    <thead id="table-head"></thead>
+    <tbody id="table-body"></tbody>
+</table>
+<table id="tabl">
+
+
+</table>
+
+
+<script type="text/javascript">
+
+    'use strict';
+    function appendTableHead(single) {
+
+        let header = domHelper.createTableHeader(single);
+        let thead = document.getElementById('table-head');
+        console.log(header)
+        thead.appendChild(header);
+    }
+
+    function appendToTable(data) {
+
+        let rows = data.map(x => domHelper.createTableRow(x));
+        let tableBody = document.getElementById('table-body');
+
+        appendTableHead(data[0]);
+
+        for (let row of rows) {
+            tableBody.appendChild(row);
+        }
+    }
+    function timedRefresh(time) {
+        setTimeout("location.reload(true);", time);
+    }
+    function spremanje(odg) {
+        console.log(odg);
+        var tablica = document.getElementById("tabl");
+        for (let i = 0; i < odg.data.length; i++) {
+            var red = tablica.insertRow();
+            var naz_stupac = red.insertCell();
+            var slika = document.createElement('img');
+            slika.src = odg.data[i].image;
+            slika.width = 100;
+            slika.height = 100;
+            var slika_stupac = red.insertCell();
+            slika_stupac.appendChild(slika);
+            naz_stupac.innerHTML = odg.data[i].name;
+        }
+    }
+    
+    function spremanje2(odg) {
+        console.log(odg);
+        var tablica = document.getElementById("tabl");
+        for (let i = 0; i < odg.data.length; i++) {
+            var red = tablica.insertRow();
+            var naz_stupac = red.insertCell();
+            var slika = document.createElement('img');
+            slika.src = odg.data[i].idCocktail.image;
+            slika.width = 100;
+            slika.height = 100;
+            var slika_stupac = red.insertCell();
+            slika_stupac.appendChild(slika);
+            naz_stupac.innerHTML = odg.data[i].idCocktail.name;
+            naz_stupac.style="color:darkred;"
+            var komentar_stupac = red.insertCell();
+            var kom = document.createElement('textarea');
+            kom.disabled = true;
+            kom.style ="width:100%; border: 1px solid #ccc; border-radius:4px; background-color: #f8f8f8;"
+            kom.innerHTML = odg.data[i].comment;
+
+            komentar_stupac.appendChild(kom);
+            var btn_delete = document.createElement("button");
+            btn_delete.innerHTML = "Delete";
+            btn_delete.style ="margin-left:20px; margin-right:20px; border: none; border-radius: 6px; cursor: pointer; width: 80px; color:white; background-color:red; padding: 8px 20px;"
+            var delete_stupac = red.insertCell();
+            delete_stupac.appendChild(btn_delete);
+            btn_delete.id = odg.data[i].idCocktail.id;
+            btn_delete.addEventListener("click", brisi, false);
+            var btn_edit = document.createElement("button");
+            btn_edit.innerHTML = "Edit";
+            btn_edit.style =" margin: auto; border: none; border-radius: 6px; cursor: pointer; width: 80px; color:white; background-color:#3399ff; padding: 8px 20px;"
+            
+       
+           
+            var edit_stupac = red.insertCell();
+            
+
+            var idd = odg.data[i].idCocktail.id;
+            btn_edit.id = odg.data[i].idCocktail.id;
+            var ahref = document.createElement('a');
+            ahref.appendChild(btn_edit);
+            ahref.setAttribute('href', '/pmfst/addcocktail');
+            btn_edit.addEventListener("click", uredi, false);
+            edit_stupac.appendChild(ahref);
+            edit_stupac.id = odg.data[i].idCocktail.id;
+            
+
+        }
+    }
+    function openForm() {
+        document.getElementById("myForm").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+ 
+    function uredi(event) {
+        console.log(event.target.parentNode.parentNode);
+        var idd = event.target.parentNode.parentNode.id;
+
+        localStorage.setItem("IdCocktail", `${idd}`);
+        localStorage.setItem("uredi", "da");
+        localStorage.setItem("natrag", "/pmfst/mycocktails");
+
+    }
+    function brisi(event) {
+        console.log(event.target.id);
+        var idkok = event.target.id;
+        axios.delete(`/api/usercocktail/delete/${idkok}`, idkok);
+        
+        timedRefresh(500);
+    }
+    axios.get('/api/usercocktail').then(response => spremanje2(response));
+    
+</script>

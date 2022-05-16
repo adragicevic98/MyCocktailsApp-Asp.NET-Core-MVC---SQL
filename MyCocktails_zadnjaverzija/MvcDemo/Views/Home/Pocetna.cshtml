@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewData["Title"] = "Pocetna";
+}
+
+
+
+<style>
+    #slija {
+                width: 290px;
+                height: 400px;
+            }
+
+</style>
+<html>
+<head>
+    <style>
+        input[type=search] {
+            width: 20%;
+            height:2.5em;
+            float:left;
+        }
+
+        #random {
+            width: 25%;
+            background-color: darkred;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: solid 1px white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: width 0.4s ease-in-out;
+        }
+        #pretraga {
+            width: 10%;
+            height: 2.5em;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <form>
+        <h3>You have an idea?</h3>
+        <form class="form-inline">
+            <input id="unos" class="form-control mr-sm-2" type="search" placeholder="Search cocktail" aria-label="Search">
+            <input type="button" id="pretraga" class="btn btn-success border-white" style="background-color:darkred;" onclick="trazi()" value="Search"></input>
+        </form>
+
+    </form>
+    <br />
+    <br />
+    <br />
+    <form>
+        <h3>You don't have any idea? We can help you!</h3>
+        <input type="button" id="random" value="Random cocktail" onclick="odabir();" />
+    </form>
+
+    <img id="slija" src="~/img/konacnoPNG.png" style="float:right;" />
+
+</body>
+<script>
+ 
+    function timedRefresh(time) {
+        setTimeout("location.reload(true);", time);
+    }
+    var zahtjev = new XMLHttpRequest();
+    function odabir() {
+        var id;
+        zahtjev.onreadystatechange = stanje;
+        zahtjev.open('GET', `https://www.thecocktaildb.com/api/json/v1/1/random.php `, true)
+        zahtjev.send();
+        function stanje() {
+            if (zahtjev.status == 200 && zahtjev.readyState == 4) {
+                var odg = zahtjev.responseText;
+                console.log("Response:" + odg);
+                objekt = JSON.parse(odg);
+                console.log(objekt);
+                var nesto = objekt.drinks[0];
+                console.log(nesto);
+                id = nesto.idDrink;
+                console.log(id);
+                localStorage.setItem("IdCocktail", `${id}`);
+                localStorage.setItem("natrag", "/cocktails/homepage");
+           
+            }
+        }
+        setTimeout(funk, 1000);
+        function funk(){
+            location.replace("/pmfst/cocktail");
+        }
+
+
+    }
+    var zahtjev1 = new XMLHttpRequest();
+    var objekt1;
+    function trazi() {
+        var naziv = document.getElementById("unos").value;
+        console.log(naziv);
+        var id1;
+        zahtjev1.onreadystatechange = stanje1;
+        zahtjev1.open('GET', `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${naziv}`, true)
+        zahtjev1.send();
+        function stanje1() {
+            if (zahtjev1.status == 200 && zahtjev1.readyState == 4) {
+                var odg1 = zahtjev1.responseText;
+                console.log("Response:" + odg1);
+                objekt1 = JSON.parse(odg1);
+                console.log(objekt1);
+                localStorage.setItem("natrag", "/cocktails/homepage");
+                if (objekt1.drinks != null) {
+                var nesto1 = objekt1.drinks[0];
+                console.log(nesto1);
+               
+                    id1 = nesto1.idDrink;
+                    console.log(id1);
+                    localStorage.setItem("IdCocktail", `${id1}`);
+                    
+                    setTimeout(funk, 1000);
+                    function funk() {
+                        location.replace("/pmfst/cocktail");
+                    }
+                } else {
+                    var modal = document.getElementById("myModal");
+
+                    // Get the button that opens the modal
+                    var btn = document.getElementById("pretraga");
+
+                    // Get the <span> element that closes the modal
+                    var span = document.getElementsByClassName("close")[0];
+                setTimeout(nema, 100);
+
+                //location.replace("/cocktails/homepage");
+                modal.style.display = "block";
+                function nema() {
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                            location.replace(localStorage.getItem("natrag"));
+                        }
+                    }
+                    span.onclick = function () {
+                        modal.style.display = "none";
+                        location.replace(localStorage.getItem("natrag"));
+                    }
+
+                }
+                 }
+
+            }
+        }
+
+
+
+    }
+</script>
+</html>
+
+
